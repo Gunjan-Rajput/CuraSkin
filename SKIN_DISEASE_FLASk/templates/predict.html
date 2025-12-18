@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+
+{% block title %}Predict - Skin Disease Detection{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card shadow-lg">
+                <div class="card-header bg-info text-white text-center">
+                    <h3><i class="fas fa-camera"></i> Skin Disease Detection</h3>
+                </div>
+                <div class="card-body p-4">
+                    <!-- Camera Capture Section -->
+                    <div class="mb-4">
+                        <h5 class="mb-3">Capture from Camera</h5>
+                        <div class="camera-preview mx-auto mb-3" id="cameraPreview">
+                            <div class="h-100 d-flex align-items-center justify-content-center text-muted">
+                                Camera preview will appear here
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <button class="btn btn-primary me-2" id="startCamera">
+                                <i class="fas fa-play"></i> Start Camera
+                            </button>
+                            <button class="btn btn-success me-2" id="captureBtn" disabled>
+                                <i class="fas fa-camera"></i> Capture
+                            </button>
+                            <button class="btn btn-warning" id="stopCamera" disabled>
+                                <i class="fas fa-stop"></i> Stop Camera
+                            </button>
+                        </div>
+                        <canvas id="captureCanvas" style="display: none;"></canvas>
+                    </div>
+
+                    <hr>
+
+                    <!-- File Upload Section -->
+                    <div class="mb-4">
+                        <h5 class="mb-3">Or Upload Image</h5>
+                        <form id="uploadForm" enctype="multipart/form-data">
+                            <div class="mb-3">
+                                <input type="file" class="form-control" id="fileInput" name="file" accept="image/*">
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="text-center">
+                        <form id="predictionForm" method="POST">
+                            <input type="hidden" name="camera_image" id="cameraImageInput">
+                            <button type="submit" class="btn btn-success btn-lg" id="analyzeBtn" disabled>
+                                <i class="fas fa-search"></i> Analyze Image
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+let stream = null;
+let video = null;
+let canvas = null;
+let context = null;
+
+document.getElementById('startCamera').addEventListener('click', async function() {
+    try {
+        stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        
+        // Create video element if it doesn't exist
+        if (!video) {
+            video = document.createElement('video');
+            video.autoplay = true;
+            canvas = document.getElementById('captureCanvas');
+            context = canvas.getContext('2d');
+        }
+        
+        video.srcObject = stream;
+        
+        // Update preview
+        const preview = document.getElementById('cameraPreview');
+        preview.innerHTML = '';
+        preview.appendChild(video);
+        
+        // Enable/disable buttons
+        document.getElementById('startCamera').disabled = true;
+        document.getElementById('captureBtn').disabled = false;
+        document.getElementById('stopCamera').disabled = false;
+        
+    } catch (err) {
+        alert('Error accessing camera: ' + err.message);
+    }
+});
+
+document.getElementById('captureBtn').addEventListener('click', function() {
+    if (video) {
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+        
+        // Convert to base64
+        const imageData = canvas.toDataURL('image/jpeg');
+        document.getElementById('cameraImageInput').value = imageData;
+        
+        // Enable analyze button
+        document.getElementById('analyzeBtn').disabled = false;
+        
+        alert('Image captured successfully!');
+    }
+});
+
+document.getElementById('stopCamera').addEventListener('click', function() {
+    if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+        document.getElementById('cameraPreview').innerHTML = 
+            '<div class="h-100 d-flex align-items-center justify-content-center text-muted">Camera preview will appear here</div>';
+        
+        // Enable/disable buttons
+        document.getElementById('startCamera').disabled = false;
+        document.getElementById('captureBtn').disabled = true;
+        document.getElementById('stopCamera').disabled = true;
+    }
+});
+
+// Handle file input change
+document.getElementById('fileInput').addEventListener('change', function(e) {
+    if (e.target.files.length > 0) {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+        
+        reader.onload = function(event) {
+            document.getElementById('cameraImageInput').value = event.target.result;
+            document.getElementById('analyzeBtn').disabled = false;
+        };
+        
+        reader.readAsDataURL(file);
+    }
+});
+</script>
+{% endblock %}
