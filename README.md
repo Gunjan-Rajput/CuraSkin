@@ -89,22 +89,42 @@ To develop an intelligent system that can:
 
 ##  Project Structure
 
-```id="struct999"
-SKIN_DISEASE_FLASK/
+CuraSkin/
 │
-├── images/                  
-├── static/                  
-├── templates/               
+├── Dataset/
+│   ├── Train/
+│   ├── Test/
+│   │   ├── Acne/
+│   │   ├── Lentigines/
+│   │   ├── Leprosy/
+│   │   ├── Melasma/
+│   │   ├── Normal_Skin/
+│   │   ├── Other/
+│   │   ├── Pigmentation/
+│   │   └── Vitiligo/
+│   └── Validation/
 │
-├── prediction2.py   ⭐ Main file (Run this)
-├── app.py                   
-├── Training.py              
+├── images/
+├── static/
+├── templates/
 │
-├── skin_disease_model.h5    
-├── class_indices.npy        
+├── app.py
+├── prediction.py
+├── prediction2.py   
 │
-├── requirements.txt         
-```
+├── Training.py
+├── skin_disease_model.h5
+│
+├── class_indices.npy
+├── class_mapping.json
+│
+├── jff_to_jpg.py
+├── requirements.txt
+│
+├── confusion.png
+├── Training_final.png
+│
+└── README.md
 
 ---
 
@@ -211,15 +231,12 @@ python prediction2.py
 
 ---
 
-
----
-
-## 📜 License
+## License
 
 This project is developed for academic purposes.
 
 ---
 
-## ⭐ Acknowledgement
+## Acknowledgement
 
 Thanks to open-source libraries and tools used in this project.
