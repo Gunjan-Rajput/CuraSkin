@@ -88,7 +88,7 @@ To develop an intelligent system that can:
 ---
 
 ##  Project Structure
-
+```bash id="cmd101"
 CuraSkin/
 │
 ├── Dataset/
@@ -110,7 +110,7 @@ CuraSkin/
 │
 ├── app.py
 ├── prediction.py
-├── prediction2.py   
+├── prediction2.py
 │
 ├── Training.py
 ├── skin_disease_model.h5
@@ -125,7 +125,7 @@ CuraSkin/
 ├── Training_final.png
 │
 └── README.md
-
+```
 ---
 
 ##  Setup Instructions
